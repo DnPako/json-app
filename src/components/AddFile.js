@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Form, Select, Divider, Button,Table, Icon, Header } from 'semantic-ui-react';
+import EmbeddedTable from './EmbeddedTable';
 
 
 class AddFile extends React.Component {
@@ -11,23 +12,7 @@ class AddFile extends React.Component {
             object : {}
         }
     }
-
-    // Cells of embedded object
-    renderEmbedded(key){
-        return (
-            <Table.Row key={key}>
-                <Table.Cell>
-                    <Form.Field>
-                    <input type="text" placeholder="Key"/>
-                    </Form.Field>
-                </Table.Cell>
-                <Table.Cell>
-                    <input type="text" placeholder="Key"/>
-                </Table.Cell>
-                <Table.Cell><Header textAlign='center'><Icon name='add' /></Header></Table.Cell>
-            </Table.Row>)
-    }
-
+    
     // Add json object
     addObject() {
         const object = {...this.state.object};
@@ -53,12 +38,12 @@ class AddFile extends React.Component {
         this.setState({object});
     }
 
-    //Add embedded Object to json
+    //Add json with embedded Object
     addEmbeddedOject() {
         console.log('Object added');
     }
 
-    // Cancel adding embedded object to json
+    // Cancel adding json with embedded object
     cancelEmbeddedObject(){
         console.log('Cancelling add');
     }
@@ -78,19 +63,7 @@ class AddFile extends React.Component {
                         { key: 'object', value: 'object', text: 'Object' },
                       ];
         if(this.displayTable){
-            table = <Table celled>
-              <Table.Header>
-                    <Table.Row>
-                          <Table.HeaderCell>Key</Table.HeaderCell>
-                          <Table.HeaderCell>Value</Table.HeaderCell>
-                          <Table.HeaderCell>Action</Table.HeaderCell>
-                    </Table.Row>
-              </Table.Header>
-
-              <Table.Body>
-                          {this.inObject.map(this.renderEmbedded)}
-              </Table.Body>
-            </Table>;
+            table = <EmbeddedTable inObject={this.inObject}></EmbeddedTable>;
         }
         return (
             <Grid>
