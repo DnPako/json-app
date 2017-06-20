@@ -6,13 +6,14 @@ import EmbeddedTable from './EmbeddedTable';
 class AddFile extends React.Component {
     constructor(){
         super();
-        this.inObject = [];
-        this.displayTable = false;
+        this.inObject = [];// Keys for embedded object case
+        this.displayTable = false;// Display table for embedded object elements
+        this.addEmbeddedRow = this.addEmbeddedRow.bind(this);
         this.state = {
             object : {}
         }
     }
-    
+
     // Add json object
     addObject() {
         const object = {...this.state.object};
@@ -36,6 +37,14 @@ class AddFile extends React.Component {
                 break;
         }
         this.setState({object});
+    }
+
+    // add a row to embedded table
+    addEmbeddedRow(e) {
+        const timestamp = Date.now();
+        this.inObject.push(timestamp);
+        console.log(timestamp);
+        this.forceUpdate();
     }
 
     //Add json with embedded Object
@@ -63,7 +72,10 @@ class AddFile extends React.Component {
                         { key: 'object', value: 'object', text: 'Object' },
                       ];
         if(this.displayTable){
-            table = <EmbeddedTable inObject={this.inObject}></EmbeddedTable>;
+            table = <EmbeddedTable
+                                    inObject={this.inObject}
+                                    addEmbeddedRow={this.addEmbeddedRow}>
+                     </EmbeddedTable>;
         }
         return (
             <Grid>

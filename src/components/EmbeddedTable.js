@@ -3,19 +3,21 @@ import { Grid, Form, Select, Divider, Button,Table, Icon, Header } from 'semanti
 
 
 class EmbeddedTable extends React.Component {
-    // Add The Embedded obejct to the file
-    addEmbedded(e) {
-        console.log('test');
-    }
 
     render() {
         const inObject = this.props.inObject;
+        const types = [
+                        { key: 'int', value: 'int', text: 'Integer' },
+                        { key: 'float', value: 'float', text: 'Number' },
+                        { key: 'string', value: 'string', text: 'String' },
+                      ];
         return (
             <Table celled>
               <Table.Header>
                     <Table.Row>
                           <Table.HeaderCell>Key</Table.HeaderCell>
                           <Table.HeaderCell>Value</Table.HeaderCell>
+                          <Table.HeaderCell>Type</Table.HeaderCell>
                           <Table.HeaderCell>Action</Table.HeaderCell>
                     </Table.Row>
               </Table.Header>
@@ -31,7 +33,12 @@ class EmbeddedTable extends React.Component {
                                   <Table.Cell>
                                       <input type="text" placeholder="Key"/>
                                   </Table.Cell>
-                                  <Table.Cell><Header textAlign='center'><a><Icon name='add' onClick={(e) => this.addEmbedded(e)}/></a></Header></Table.Cell>
+                                  <Table.Cell>
+                                      <Form.Field>
+                                          <Select name='emtype' placeholder='Select type' options={types} onChange={(e, { value }) => this.emtype = value}/>
+                                      </Form.Field>
+                                  </Table.Cell>
+                                  <Table.Cell><Header textAlign='center'><a><Icon name='add' onClick={this.props.addEmbeddedRow}/></a></Header></Table.Cell>
                               </Table.Row>)
                           })}
               </Table.Body>
