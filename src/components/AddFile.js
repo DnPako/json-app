@@ -14,6 +14,19 @@ class AddFile extends React.Component {
         }
     }
 
+    // Type list changes
+    handleListChange(e,value) {
+        this.inObject = [];
+        this.type = value;
+        if(value === 'object') {
+            this.displayTable = true;
+            this.inObject.push(this.key.value);
+        }else {
+            this.displayTable = false;
+        }
+        this.forceUpdate();
+    }
+
     // Add json object
     addObject() {
         const object = {...this.state.object};
@@ -29,11 +42,8 @@ class AddFile extends React.Component {
                 break;
             case 'string':
                 object[key] = value;
-
                 break;
-            case 'object':
-                this.displayTable = true;
-                this.inObject.push(key);
+            default:
                 break;
         }
         this.setState({object});
@@ -76,6 +86,8 @@ class AddFile extends React.Component {
                                     inObject={this.inObject}
                                     addEmbeddedRow={this.addEmbeddedRow}>
                      </EmbeddedTable>;
+        }else {
+            table = null;
         }
         return (
             <Grid>
@@ -84,17 +96,17 @@ class AddFile extends React.Component {
                     <Form>
                         <Form.Group widths='equal'>
                             <Form.Field>
+                                <label htmlFor="types">Types</label>
+                                <Select name='type' placeholder='Select type' options={types} onChange={(e,{value}) => this.handleListChange(e,value)}/>
+                            </Form.Field>
+                            <Form.Field>
                                 <label htmlFor="key">key</label>
                                 <input type="text" placeholder="Key" ref={input => {this.key = input}}/>
                             </Form.Field>
-                            <Form.Field>
+                            {!this.displayTable ? <Form.Field>
                                 <label htmlFor="value">Value</label>
                                 <input type="text" placeholder="Value" ref={input => {this.value = input}}/>
-                            </Form.Field>
-                            <Form.Field>
-                                <label htmlFor="types">Types</label>
-                                <Select name='type' placeholder='Select type' options={types} onChange={(e, { value }) => this.type = value}/>
-                            </Form.Field>
+                            </Form.Field> : null}
                         </Form.Group>
                         {table}
                     </Form>
