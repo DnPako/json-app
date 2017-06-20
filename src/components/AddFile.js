@@ -58,13 +58,34 @@ class AddFile extends React.Component {
 
     //Add json with embedded Object
     addEmbeddedOject() {
-        console.log('Object added');
-        console.log(this.refs.embeddedTable);
+        const object = {...this.state.object};
+        const embeddedObject = {};
+        const table = this.refs.embeddedTable;
+        const objectKey = this.key.value;
+        for (const index in this.inObject) {
+            switch (table[`emtype${index}`]) {
+                case 'int':
+                    embeddedObject[table[`key${index}`].value] = parseInt(table[`value${index}`].value);
+                    break;
+                case 'float':
+                    embeddedObject[table[`key${index}`].value] = parseFloat(table[`value${index}`].value);
+                    break;
+                default:
+                    embeddedObject[table[`key${index}`].value] = table[`value${index}`].value;
+                    break;
+            }
+            object[objectKey] = embeddedObject;
+        }
+        this.setState({object});
+        this.key.value = '';
+        this.cancelEmbeddedObject();
+        console.log(object);
     }
 
     // Cancel adding json with embedded object
     cancelEmbeddedObject(){
-        console.log('Cancelling add');
+        this.displayTable = false;
+        this.forceUpdate();
     }
 
     render() {
