@@ -30,23 +30,22 @@ class AddFile extends React.Component {
     // Add json object
     addObject() {
         const object = {...this.state.object};
-        const key = this.key.value;
-        const value = this.value.value;
-        const type = this.type;
+        const {key, value, type} = this;
         switch (type) {
             case 'int':
-                object[key] = parseInt(value);
+                object[key.value] = parseInt(value.value);
                 break;
             case 'float':
-                object[key] = parseFloat(value);
+                object[key.value] = parseFloat(value.value);
                 break;
             case 'string':
-                object[key] = value;
+                object[key.value] = value.value;
                 break;
             default:
                 break;
         }
         this.setState({object});
+        this.key.value = this.value.value = '';
     }
 
     // add a row to embedded table
@@ -60,6 +59,7 @@ class AddFile extends React.Component {
     //Add json with embedded Object
     addEmbeddedOject() {
         console.log('Object added');
+        console.log(this.refs.embeddedTable);
     }
 
     // Cancel adding json with embedded object
@@ -83,6 +83,7 @@ class AddFile extends React.Component {
                       ];
         if(this.displayTable){
             table = <EmbeddedTable
+                                    ref='embeddedTable'
                                     inObject={this.inObject}
                                     addEmbeddedRow={this.addEmbeddedRow}>
                      </EmbeddedTable>;

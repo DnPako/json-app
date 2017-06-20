@@ -24,18 +24,20 @@ class EmbeddedTable extends React.Component {
 
               <Table.Body>
                           {inObject.map((key,index) => {
+                              const keyName = `key${index}`;
+                              const valueName = `value${index}`;
                               return (<Table.Row key={index}>
                                   <Table.Cell>
                                       <Form.Field>
-                                      <input type="text" placeholder="Key"/>
+                                      <input ref={input => {this[keyName] = input}} type="text" placeholder="Key"/>
                                       </Form.Field>
                                   </Table.Cell>
                                   <Table.Cell>
-                                      <input type="text" placeholder="Key"/>
+                                      <input ref={input => {this[valueName] = input}} type="text" placeholder="Key"/>
                                   </Table.Cell>
                                   <Table.Cell>
                                       <Form.Field>
-                                          <Select name='emtype' placeholder='Select type' options={types} onChange={(e, { value }) => this.emtype = value}/>
+                                          <Select name='emtype' placeholder='Select type' options={types} onChange={(e, { value }) => this[`emtype${index}`] = value}/>
                                       </Form.Field>
                                   </Table.Cell>
                                   <Table.Cell><Header textAlign='center'><a><Icon name='add' onClick={this.props.addEmbeddedRow}/></a></Header></Table.Cell>
