@@ -20,7 +20,7 @@ const Root = () => {
                         <main>
                             <Switch>
                                 <Route exact path="/" component={Home}/>
-                                <Route path="/file/new" component={AddFile}/>
+                                <Route path="/file/new/:idFile" component={AddFile}/>
                                 <Route path="/file/edit/:idFile" component={EditFile}/>
                             </Switch>
                         </main>

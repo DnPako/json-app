@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Form, Select, Divider, Button,Table, Icon, Header } from 'semantic-ui-react';
+import { Grid, Form, Select, Divider, Button } from 'semantic-ui-react';
 import EmbeddedTable from './EmbeddedTable';
 
 
@@ -48,6 +48,14 @@ class AddFile extends React.Component {
         this.key.value = this.value.value = '';
     }
 
+    // save object in local
+    saveObject() {
+        const objectName = this.props.match.params.idFile;
+        localStorage.setItem(`file-${objectName}`,JSON.stringify(this.state.object));
+
+        console.log(objectName);
+    }
+
     // add a row to embedded table
     addEmbeddedRow(e) {
         const timestamp = Date.now();
@@ -90,12 +98,15 @@ class AddFile extends React.Component {
 
     render() {
         let table = null;
-        const  addObjectButton = <Button onClick={() => this.addObject()}>Add to object</Button>;
-        const addEmbeddedButtons = <div>
+        const  addObjectButton =    <div>
+                                        <Button onClick={() => this.addObject()}>Add to object</Button>
+                                        <Button onClick={() => this.saveObject()}>Save</Button>
+                                    </div>;
+        const addEmbeddedButtons =  <div>
                                         <Divider hidden />
                                         <Button onClick={() => this.addEmbeddedOject()}>Add to embedded object</Button>
                                         <Button onClick={() => this.cancelEmbeddedObject()}>Cancel</Button>
-                                  </div>;
+                                    </div>;
         const types = [
                         { key: 'int', value: 'int', text: 'Integer' },
                         { key: 'float', value: 'float', text: 'Number' },
