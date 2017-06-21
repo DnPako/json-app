@@ -52,15 +52,12 @@ class AddFile extends React.Component {
     saveObject() {
         const objectName = this.props.match.params.idFile;
         localStorage.setItem(`file-${objectName}`,JSON.stringify(this.state.object));
-
-        console.log(objectName);
     }
 
     // add a row to embedded table
     addEmbeddedRow(e) {
         const timestamp = Date.now();
         this.inObject.push(timestamp);
-        console.log(timestamp);
         this.forceUpdate();
     }
 
@@ -87,7 +84,6 @@ class AddFile extends React.Component {
         this.setState({object});
         this.key.value = '';
         this.cancelEmbeddedObject();
-        console.log(object);
     }
 
     // Cancel adding json with embedded object

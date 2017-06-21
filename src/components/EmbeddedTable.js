@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Form, Select, Divider, Button,Table, Icon, Header } from 'semantic-ui-react';
+import { Form, Select, Table, Icon, Header } from 'semantic-ui-react';
 
 
 class EmbeddedTable extends React.Component {

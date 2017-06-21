@@ -7,6 +7,7 @@ class Home extends React.Component {
     constructor(){
         super();
         this.deleteFile = this.deleteFile.bind(this);
+        this.options = [];
         this.state = {
         files : [] }
     }
@@ -14,7 +15,9 @@ class Home extends React.Component {
     componentWillMount() {
         for (const local in localStorage) {
             if(local.startsWith('file-')) {
+                const option = {key:local, value:local.replace(/file-/g,''),text:local.replace(/file-/g,'')}
                 this.state.files.push(local);
+                this.options.push(option)
             }
         }
     }
@@ -30,15 +33,23 @@ class Home extends React.Component {
     }
 
     deleteFile(key,index) {
-        const files = [...this.state.files]
-        console.log(index);
+        const files = [...this.state.files];
         localStorage.removeItem(key);
         files.splice(index, 1);
         this.setState({files});
     }
 
+    handleFileChange(e,value) {
+        e.preventDefault();
+        if(e.target.localName === 'div') {
+            this.link = value;
+            return;
+        }
+        this.context.router.history.push(`/file/edit/${this.link}`);
+    }
+
     render() {
-        const options = [{ key: 'af', value: 'af', text: 'Choose file' }];
+        const options = this.options || [{ key: 'null', value: 'null', text: 'No file available'}];
         let fileTable = null;
         if(this.display){
             fileTable = <FileTable
@@ -60,7 +71,7 @@ class Home extends React.Component {
                             </Form.Field>
                             <Form.Field width={1}>
                                 <Icon.Group size='big' onClick={(e) => this.goToFile(e)}>
-                                    <Icon name='puzzle' />
+                                    <Icon name='puzzle' link={true}/>
                                     <Icon corner name='add' />
                                 </Icon.Group>
                             </Form.Field>
@@ -77,11 +88,11 @@ class Home extends React.Component {
                     <Form>
                         <Form.Group>
                             <Form.Field width={12}>
-                                <Select placeholder='Select your file' options={options} />
+                                <Select placeholder='Select your file' options={options} onChange={(e,{value}) => this.handleFileChange(e,value)}/>
                             </Form.Field>
                             <Form.Field width={1}>
-                                <Icon.Group size='big'>
-                                    <Icon name='edit' />
+                                <Icon.Group size='big' onClick={(e) => this.handleFileChange(e)}>
+                                    <Icon name='edit' link={true}/>
                                     <Icon corner name='add' />
                                 </Icon.Group>
                             </Form.Field>
