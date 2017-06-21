@@ -6,6 +6,7 @@ import { Grid, Form, Select, Icon, Divider } from 'semantic-ui-react';
 class Home extends React.Component {
     constructor(){
         super();
+        this.deleteFile = this.deleteFile.bind(this);
         this.state = {
         files : [] }
     }
@@ -28,14 +29,22 @@ class Home extends React.Component {
         this.context.router.history.push(`/file/new/${this.name.value}`);
     }
 
+    deleteFile(key,index) {
+        const files = [...this.state.files]
+        console.log(index);
+        localStorage.removeItem(key);
+        files.splice(index, 1);
+        this.setState({files});
+    }
 
     render() {
         const options = [{ key: 'af', value: 'af', text: 'Choose file' }];
         let fileTable = null;
         if(this.display){
             fileTable = <FileTable
-                            files = {this.state.files}>
-                     </FileTable>;
+                            files={this.state.files}
+                            deleteFile ={this.deleteFile}>
+                        </FileTable>;
         }else {
             fileTable = null;
         }

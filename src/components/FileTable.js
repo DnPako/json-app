@@ -18,9 +18,9 @@ class FileTable extends React.Component {
                           {files.map((key,index) => {
                               return (<Table.Row key={index}>
                                   <Table.Cell>
-
+                                    {key.replace(/file-/g,'')}
                                   </Table.Cell>
-                                  <Table.Cell><Header textAlign='center'><a><Icon name='delete' onClick={this.props.addEmbeddedRow}/></a></Header></Table.Cell>
+                                  <Table.Cell><Header textAlign='center'><a><Icon name='delete' onClick={() => this.props.deleteFile(key,index)}/></a></Header></Table.Cell>
                               </Table.Row>)
                           })}
               </Table.Body>
