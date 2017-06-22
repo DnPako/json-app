@@ -20,7 +20,7 @@ class FileTable extends React.Component {
                                   <Table.Cell>
                                     {key.replace(/file-/g,'')}
                                   </Table.Cell>
-                                  <Table.Cell><Header textAlign='center'><a><Icon name='delete' link={true} onClick={() => this.props.deleteFile(key,index)}/></a></Header></Table.Cell>
+                                  <Table.Cell><Header textAlign='center'><Icon name='trash' link={true} onClick={() => this.props.deleteFile(key,index)}/></Header></Table.Cell>
                               </Table.Row>)
                           })}
               </Table.Body>

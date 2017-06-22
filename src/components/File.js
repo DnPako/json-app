@@ -1,7 +1,8 @@
 import React from 'react';
-import { Grid, Form, Select, Divider, Button } from 'semantic-ui-react';
+import { Grid, Form, Select, Divider, Button, Icon } from 'semantic-ui-react';
 import EmbeddedTable from './EmbeddedTable';
 import EditFile from './EditFile';
+import PropTypes from 'prop-types';
 
 
 class File extends React.Component {
@@ -146,6 +147,11 @@ class File extends React.Component {
         this.forceUpdate();
     }
 
+    // Go home
+    goHome() {
+        this.context.router.history.push(`/`);
+    }
+
     render() {
         let table = null;
         let editList = null;
@@ -174,6 +180,11 @@ class File extends React.Component {
                                         handleObjectChange={this.handleObjectChange}></EditFile> : null;
         return (
             <Grid>
+                <Grid.Row columns={1}>
+                    <Grid.Column>
+                        <Icon name='home' size='big' link={true} onClick={() => this.goHome()}/>
+                    </Grid.Column>
+                </Grid.Row>
                 {editList}
                 <Grid.Row centered columns={1}>
                     <Grid.Column>
@@ -203,5 +214,8 @@ class File extends React.Component {
     }
 }
 
+File.contextTypes = {
+    router : PropTypes.object
+}
 
 export default File;

@@ -1,17 +1,7 @@
 import React from 'react';
-import { Grid, Form, Select, Divider, Button } from 'semantic-ui-react';
-import EmbeddedTable from './EmbeddedTable';
+import { Grid, Form, Select, Divider } from 'semantic-ui-react';
 
 class EditFile extends React.Component {
-    // handleChange(e,value) {
-    //     const key = value;
-    //     const val = this.state.object[value];
-    //     const type = typeof(val);
-    //     const select = document.querySelector('#type').children[1];
-    //     console.log(type);
-    //     this.value.value = val;
-    //     this.key.value = key;
-    // }
 
     render() {
         return (
