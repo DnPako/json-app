@@ -1,7 +1,6 @@
 import React from 'react';
 import Home from './components/Home';
-import AddFile from './components/AddFile';
-import EditFile from './components/EditFile';
+import File from './components/File';
 import {render} from 'react-dom';
 import {
   BrowserRouter as Router,
@@ -20,8 +19,8 @@ const Root = () => {
                         <main>
                             <Switch>
                                 <Route exact path="/" component={Home}/>
-                                <Route path="/file/new/:idFile" component={AddFile}/>
-                                <Route path="/file/edit/:idFile" component={EditFile}/>
+                                <Route path="/file/new/:idFile" component={File}/>
+                                <Route path="/file/edit/:idFile" component={File}/>
                             </Switch>
                         </main>
                     </Router>

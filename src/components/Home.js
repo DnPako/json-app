@@ -40,7 +40,6 @@ class Home extends React.Component {
     }
 
     handleFileChange(e,value) {
-        e.preventDefault();
         if(e.target.localName === 'div') {
             this.link = value;
             return;

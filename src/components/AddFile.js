@@ -6,7 +6,6 @@ import EmbeddedTable from './EmbeddedTable';
 class AddFile extends React.Component {
     constructor(){
         super();
-        this.inObject = [];// Keys for embedded object case
         this.displayTable = false;// Display table for embedded object elements
         this.addEmbeddedRow = this.addEmbeddedRow.bind(this);
         this.state = {
