@@ -34,6 +34,7 @@ class File extends React.Component {
 
     handleObjectChange(e,value) {
         this.displayTable = false;
+        this.switchInput = false;
         this.inObject = [];
         if(value === 'null') {
             this.value.value = '';
@@ -44,17 +45,23 @@ class File extends React.Component {
             const val = this.state.object[value];
             const type = typeof(val);
             this.key.value = key;
+            console.log(type);
             if(type === 'object') {
                 this.displayTable = true;
                 for (var obj in val) {
                     this.inObject.push(obj);
                 }
+            } else if(type === 'boolean'){
+                this.switchInput = true;
             }
         }
         setTimeout(() => {
-            console.log(this.value);
-            if(this.value != null)
-                this.value.value = this.state.object[value];
+            if(this.value != null) {
+                if(this.switchInput) {
+                    this.value.checked =  this.state.object[value]
+                }
+                 this.value.value = this.state.object[value];
+            }
         }, 100)
         this.forceUpdate();
     }
@@ -65,9 +72,12 @@ class File extends React.Component {
             this.type = value;
             this.inObject = [];
             this.displayTable = false;
+            this.switchInput = false;
             if(value === 'object') {
                 this.displayTable = true;
                 this.inObject.push(this.key.value);
+            } else if (value === 'bool') {
+                this.switchInput = true;
             }
         }
         if(this.path === 'edit' && this.state.object[this.selectedObject]) {// Update
@@ -87,8 +97,9 @@ class File extends React.Component {
         const object = {...this.state.object};
         const {key, value, type} = this;
         switch (type) {
-            case 'int':
-                object[key.value] = parseInt(value.value);
+            case 'bool':
+                object[key.value] = value.checked;
+                console.log(value.checked);
                 break;
             case 'float':
                 object[key.value] = parseFloat(value.value);
@@ -100,7 +111,9 @@ class File extends React.Component {
                 break;
         }
         this.setState({object});
-        this.key.value = this.value.value = '';
+        this.key.value = '';
+        type === 'bool' ? this.value.checked = false : this.value.value = '';
+
     }
 
     // save object in local
@@ -124,8 +137,8 @@ class File extends React.Component {
         const objectKey = this.key.value;
         for (const index in this.inObject) {
             switch (table[`emtype${index}`]) {
-                case 'int':
-                    embeddedObject[table[`key${index}`].value] = parseInt(table[`value${index}`].value);
+                case 'bool':
+                    embeddedObject[table[`key${index}`].value] = table[`value${index}`].checked;
                     break;
                 case 'float':
                     embeddedObject[table[`key${index}`].value] = parseFloat(table[`value${index}`].value);
@@ -144,6 +157,7 @@ class File extends React.Component {
     // Cancel adding json with embedded object
     cancelEmbeddedObject(){
         this.displayTable = false;
+        this.switchInput = false;
         this.forceUpdate();
     }
 
@@ -155,6 +169,7 @@ class File extends React.Component {
     render() {
         let table = null;
         let editList = null;
+        let valInput = null;
         const  addObjectButton =    <div>
                                         <Button onClick={() => this.addObject()}>Add to object</Button>
                                         <Button onClick={() => this.saveObject()}>Save</Button>
@@ -165,11 +180,12 @@ class File extends React.Component {
                                         <Button onClick={() => this.cancelEmbeddedObject()}>Cancel</Button>
                                     </div>;
         const types = [
-                        { key: 'int', value: 'int', text: 'Integer' },
+                        { key: 'bool', value: 'bool', text: 'Boolean' },
                         { key: 'float', value: 'float', text: 'Number' },
                         { key: 'string', value: 'string', text: 'String' },
                         { key: 'object', value: 'object', text: 'Object' },
                       ];
+        valInput = !this.switchInput ? <input type="text" placeholder="Value" ref={input => {this.value = input}} onChange={(e) => this.handleEdit(e)}/> : <input type="checkbox" ref={input => {this.value = input}} onChange={(e) => this.handleEdit(e)}/>;
         table = this.displayTable ? <EmbeddedTable
                                         ref='embeddedTable'
                                         inObject={this.inObject}
@@ -197,11 +213,11 @@ class File extends React.Component {
                                 </Form.Field>
                                 <Form.Field>
                                     <label htmlFor="key">key</label>
-                                    <input type="text" placeholder="Key" disabled={((this.path === 'edit' && this.selectedObject !== '') || this.path === 'new') ? 'disabled' : ''} ref={input => {this.key = input}} onChange={(e) => this.handleEdit(e)}/>
+                                    <input type="text" placeholder="Key" disabled={(this.path === 'edit' && this.selectedObject !== '') ? 'disabled' : ''} ref={input => {this.key = input}} onChange={(e) => this.handleEdit(e)}/>
                                 </Form.Field>
                                 {!this.displayTable ? <Form.Field>
                                     <label htmlFor="value">Value</label>
-                                    <input type="text" placeholder="Value" ref={input => {this.value = input}} onChange={(e) => this.handleEdit(e)}/>
+                                    {valInput}
                                 </Form.Field> : null}
                             </Form.Group>
                             {table}
