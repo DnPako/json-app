@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Form, Select, Divider } from 'semantic-ui-react';
+import { Grid, Form, Select, Divider, Icon } from 'semantic-ui-react';
 
 class EditFile extends React.Component {
 
@@ -10,9 +10,10 @@ class EditFile extends React.Component {
                     <Divider hidden />
                     <Form>
                         <Form.Group widths='equal'>
-                            <Form.Field>
+                            <Form.Field inline>
                                 <label htmlFor="objects">Objects</label>
                                 <Select name='objects' placeholder='Select object' options={this.props.options} onChange={(e,{value}) => this.props.handleObjectChange(e,value)}/>
+                                <Icon name='trash' size='big' link={true} onClick={() => this.props.deleteObject()}/>
                             </Form.Field>
                         </Form.Group>
                     </Form>

@@ -12,6 +12,7 @@ class File extends React.Component {
         this.addEmbeddedRow = this.addEmbeddedRow.bind(this);
         this.deleteEmbeddedRow = this.deleteEmbeddedRow.bind(this);
         this.handleObjectChange = this.handleObjectChange.bind(this);
+        this.deleteObject = this.deleteObject.bind(this);
         this.state = {
             object : {},
             options : [{key:'null', value:'null',text:''}]
@@ -19,6 +20,7 @@ class File extends React.Component {
     }
 
     componentWillMount() {
+        this.deleted = false;
         this.path = this.props.match.url.split('/')[2]; // Edit or Add
         if(this.path === 'edit') {
             this.selectedObject = '';
@@ -189,6 +191,23 @@ class File extends React.Component {
         this.context.router.history.push(`/`);
     }
 
+    // Delete object from file
+    deleteObject(){
+        if(this.selectedObject !== '') {
+            this.deleted = true;
+            const object = {...this.state.object};
+            delete object[this.selectedObject];
+            this.setState({object});
+        }
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        if(this.deleted){
+            const objectName = this.props.match.params.idFile;
+            localStorage.setItem(`file-${objectName}`,JSON.stringify(nextState.object));
+        }
+    }
+
     render() {
         let table = null;
         let editList = null;
@@ -218,7 +237,8 @@ class File extends React.Component {
         editList = this.path === 'edit' ? <EditFile
                                         options={this.state.options}
                                         object={this.state.object}
-                                        handleObjectChange={this.handleObjectChange}></EditFile> : null;
+                                        handleObjectChange={this.handleObjectChange}
+                                        deleteObject={this.deleteObject}></EditFile> : null;
         return (
             <Grid>
                 <Grid.Row columns={1}>
