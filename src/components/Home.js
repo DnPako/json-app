@@ -7,12 +7,13 @@ class Home extends React.Component {
     constructor(){
         super();
         this.deleteFile = this.deleteFile.bind(this);
-        this.options = [];
+        this.options = [];// liste à afficher dans le dropdown
         this.state = {
         files : [] }
     }
 
     componentWillMount() {
+        // Récupération des fichiers depuis localstorage
         for (const local in localStorage) {
             if(local.startsWith('file-')) {
                 const option = {key:local, value:local.replace(/file-/g,''),text:local.replace(/file-/g,'')}
@@ -27,15 +28,18 @@ class Home extends React.Component {
         this.forceUpdate();
     }
 
+    // Naviger vers la page de l'ajout d'un nouveau fichier
     goToFile(e) {
         e.preventDefault();
         this.context.router.history.push(`/file/new/${this.name.value}`);
     }
 
+    // Supprimer fichier depuis local
     deleteFile(key,index) {
         const files = [...this.state.files];
         localStorage.removeItem(key);
         files.splice(index, 1);
+        this.options.splice(index, 1);
         this.setState({files});
     }
 

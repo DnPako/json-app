@@ -38,6 +38,7 @@ class File extends React.Component {
     handleObjectChange(e,value) {
         this.displayTable = false;
         this.switchInput = false;
+        this.selectedObject = '';
         this.inObject = [];
         if(value !== 'null') {
             const key = this.selectedObject = value;
@@ -116,10 +117,15 @@ class File extends React.Component {
             default:
                 break;
         }
+        if(this.path === 'edit') {
+            const options = [...this.state.options];
+            const option = {key:this.key.value, value:this.key.value,text:this.key.value};
+            options.push(option);
+            this.setState(options);
+        }
         this.setState({object});
         this.key.value = '';
         type === 'bool' ? this.value.checked = false : this.value.value = '';
-
     }
 
     // save object in local
@@ -140,8 +146,6 @@ class File extends React.Component {
         const index = e.target.dataset.index;
         const table = this.refs.embeddedTable;
 
-        console.log(index);
-        console.log('here',this.inObject[index]);
         if(this.inObject.length === 1){
             table[`key${index}`].value = '';
             table[`value${index}`].value = '';
@@ -196,8 +200,16 @@ class File extends React.Component {
         if(this.selectedObject !== '') {
             this.deleted = true;
             const object = {...this.state.object};
+            const options = [...this.state.options];
+            const index = this.state.options.map(obj => obj.key ).indexOf(this.selectedObject);
+
+            options.splice(index,1)
+            if(typeof(object[this.selectedObject]) !== 'object')
+                this.value.value = '';
             delete object[this.selectedObject];
-            this.setState({object});
+            this.setState({object,options});
+            this.selectedObject = '';
+            this.key.value = ''
         }
     }
 
