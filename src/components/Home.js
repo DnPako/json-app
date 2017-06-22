@@ -24,6 +24,7 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
+        // Afficher ou non la table des fichiers à supprimer
         this.state.files.length > 0 ? this.display = true : this.display = false;
         this.forceUpdate();
     }
@@ -38,16 +39,19 @@ class Home extends React.Component {
     deleteFile(key,index) {
         const files = [...this.state.files];
         localStorage.removeItem(key);
+        // Supprimer depuis le dropdown et depuis localStorage
         files.splice(index, 1);
         this.options.splice(index, 1);
         this.setState({files});
     }
 
     handleFileChange(e,value) {
+        // Le cas du choix d'un fichier depuis dropdown
         if(e.target.localName === 'div') {
             this.link = value;
             return;
         }
+        // Le cas du clique sur l'icone de modification
         this.context.router.history.push(`/file/edit/${this.link}`);
     }
 

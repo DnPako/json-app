@@ -23,8 +23,8 @@ class File extends React.Component {
         this.deleted = false;
         this.path = this.props.match.url.split('/')[2]; // Edit or Add
         if(this.path === 'edit') {
-            this.selectedObject = '';
-            // Get object
+            this.selectedObject = ''; // La valeur séléctionnée dans le dropdown de la modification
+            // Remplir component state avec les valeurs fichiers et liste dropdown
             const objectName = this.props.match.params.idFile;
             const object = JSON.parse(localStorage.getItem(`file-${objectName}`));
             for (var obj in object) {
@@ -35,26 +35,28 @@ class File extends React.Component {
         }
     }
 
+    // Changement dans la liste des fichier 'Modification'
     handleObjectChange(e,value) {
-        this.displayTable = false;
-        this.switchInput = false;
+        this.displayTable = false; // Pour afficher ou pas la table des objets embarqués
+        this.switchInput = false; // switch entre input et checkbox "this.value"
         this.selectedObject = '';
-        this.inObject = [];
-        if(value !== 'null') {
+        this.inObject = []; // Argument à passer pour dessiner les objets embarqués
+        if(value !== 'null') { // cas d'une séléction vide
+            // Les trois valeur à ajouter dans les champs du formulaire
             const key = this.selectedObject = value;
             const val = this.state.object[value];
             const type = typeof(val);
             this.key.value = key;
-            if(type === 'object') {
+            if(type === 'object') { // Choix d'un type Object
                 this.displayTable = true;
                 for (var obj in val) {
                     this.inObject.push(obj);
                 }
-            } else if(type === 'boolean'){
+            } else if(type === 'boolean'){ // Choix d'un type boolean
                 this.switchInput = true;
             }
         }
-        setTimeout(() => {
+        setTimeout(() => {// Vider ou remplir les champs après les Changements dans le dropdown des types
             if(this.value != null) {
                 if(this.switchInput) {
                     this.value.checked =  this.state.object[value]
@@ -76,7 +78,7 @@ class File extends React.Component {
         this.forceUpdate();
     }
 
-    // Type list changes
+    // Changement dans le formulaire
     handleEdit(e,value) {
         if(value !== undefined) {// select case: update or add
             this.type = value;
@@ -91,6 +93,7 @@ class File extends React.Component {
             }
         }
         if(this.path === 'edit' && this.state.object[this.selectedObject] !== undefined) {// Update
+            // Ajout direct des modifications à l'objet
             const object = {...this.state.object};
             if(value === undefined) {
                 object[this.selectedObject] = e.target.type === 'text' ? e.target.value : e.target.checked;
@@ -146,11 +149,11 @@ class File extends React.Component {
         const index = e.target.dataset.index;
         const table = this.refs.embeddedTable;
 
-        if(this.inObject.length === 1){
+        if(this.inObject.length === 1){ // Si la ligne à supprimer est la dernières
             table[`key${index}`].value = '';
             table[`value${index}`].value = '';
         }
-        else {
+        else { // Sinon on supprime la ligne
             this.inObject.splice(index,1);
         }
         this.forceUpdate();
@@ -198,7 +201,7 @@ class File extends React.Component {
     // Delete object from file
     deleteObject(){
         if(this.selectedObject !== '') {
-            this.deleted = true;
+            this.deleted = true;// sert pour mettre à jour state
             const object = {...this.state.object};
             const options = [...this.state.options];
             const index = this.state.options.map(obj => obj.key ).indexOf(this.selectedObject);
@@ -214,6 +217,7 @@ class File extends React.Component {
     }
 
     componentWillUpdate(nextProps, nextState) {
+        // Enregistrer les modifications après la suppression dans localstorage
         if(this.deleted){
             const objectName = this.props.match.params.idFile;
             localStorage.setItem(`file-${objectName}`,JSON.stringify(nextState.object));
