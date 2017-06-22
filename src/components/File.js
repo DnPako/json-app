@@ -10,6 +10,7 @@ class File extends React.Component {
         super();
         this.displayTable = false;// Display table for embedded object elements
         this.addEmbeddedRow = this.addEmbeddedRow.bind(this);
+        this.deleteEmbeddedRow = this.deleteEmbeddedRow.bind(this);
         this.handleObjectChange = this.handleObjectChange.bind(this);
         this.state = {
             object : {},
@@ -36,16 +37,11 @@ class File extends React.Component {
         this.displayTable = false;
         this.switchInput = false;
         this.inObject = [];
-        if(value === 'null') {
-            this.value.value = '';
-            this.key.value = '';
-            this.selectedObject = '';
-        } else {
+        if(value !== 'null') {
             const key = this.selectedObject = value;
             const val = this.state.object[value];
             const type = typeof(val);
             this.key.value = key;
-            console.log(type);
             if(type === 'object') {
                 this.displayTable = true;
                 for (var obj in val) {
@@ -61,6 +57,17 @@ class File extends React.Component {
                     this.value.checked =  this.state.object[value]
                 }
                  this.value.value = this.state.object[value];
+            }else {
+                const table = this.refs.embeddedTable;
+                for (const [index,key] of this.inObject.entries()) {
+                    table[`key${index}`].value = key;
+                    table[`value${index}`].value = this.state.object[this.selectedObject][key];
+                }
+            }
+            if(value === 'null') {
+                this.value.value = '';
+                this.key.value = '';
+                this.selectedObject = '';
             }
         }, 100)
         this.forceUpdate();
@@ -80,12 +87,10 @@ class File extends React.Component {
                 this.switchInput = true;
             }
         }
-        if(this.path === 'edit' && this.state.object[this.selectedObject]) {// Update
+        if(this.path === 'edit' && this.state.object[this.selectedObject] !== undefined) {// Update
             const object = {...this.state.object};
-            // object[]
             if(value === undefined) {
-                console.log(object[this.selectedObject]);
-                object[this.selectedObject] = e.target.value;
+                object[this.selectedObject] = e.target.type === 'text' ? e.target.value : e.target.checked;
                 this.setState({object});
             }
         }
@@ -99,7 +104,6 @@ class File extends React.Component {
         switch (type) {
             case 'bool':
                 object[key.value] = value.checked;
-                console.log(value.checked);
                 break;
             case 'float':
                 object[key.value] = parseFloat(value.value);
@@ -123,9 +127,26 @@ class File extends React.Component {
     }
 
     // add a row to embedded table
-    addEmbeddedRow(e) {
+    addEmbeddedRow() {
         const timestamp = Date.now();
         this.inObject.push(timestamp);
+        this.forceUpdate();
+    }
+
+    // Delete embedded row
+    deleteEmbeddedRow(e) {
+        const index = e.target.dataset.index;
+        const table = this.refs.embeddedTable;
+
+        console.log(index);
+        console.log('here',this.inObject[index]);
+        if(this.inObject.length === 1){
+            table[`key${index}`].value = '';
+            table[`value${index}`].value = '';
+        }
+        else {
+            this.inObject.splice(index,1);
+        }
         this.forceUpdate();
     }
 
@@ -136,18 +157,20 @@ class File extends React.Component {
         const table = this.refs.embeddedTable;
         const objectKey = this.key.value;
         for (const index in this.inObject) {
-            switch (table[`emtype${index}`]) {
-                case 'bool':
+            if(table[`key${index}`].value !== '' &&  table[`value${index}`] !== '') {
+                switch (table[`emtype${index}`]) {
+                    case 'bool':
                     embeddedObject[table[`key${index}`].value] = table[`value${index}`].checked;
                     break;
-                case 'float':
+                    case 'float':
                     embeddedObject[table[`key${index}`].value] = parseFloat(table[`value${index}`].value);
                     break;
-                default:
+                    default:
                     embeddedObject[table[`key${index}`].value] = table[`value${index}`].value;
                     break;
+                }
+                object[objectKey] = embeddedObject;
             }
-            object[objectKey] = embeddedObject;
         }
         this.setState({object});
         this.key.value = '';
@@ -189,7 +212,9 @@ class File extends React.Component {
         table = this.displayTable ? <EmbeddedTable
                                         ref='embeddedTable'
                                         inObject={this.inObject}
-                                        addEmbeddedRow={this.addEmbeddedRow}></EmbeddedTable> : null;
+                                        addEmbeddedRow={this.addEmbeddedRow}
+                                        deleteEmbeddedRow={this.deleteEmbeddedRow}
+                                        embeddedObject={this.state.object[this.selectedObject] || ''}></EmbeddedTable> : null;
         editList = this.path === 'edit' ? <EditFile
                                         options={this.state.options}
                                         object={this.state.object}
