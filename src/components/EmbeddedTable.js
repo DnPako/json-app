@@ -6,7 +6,7 @@ class EmbeddedTable extends React.Component {
 
     render() {
         const inObject = this.props.inObject;
-        const embeddedObject = this.props.embeddedObject;
+        const embeddedObject = Object.keys(this.props.embeddedObject);
         const types = [
                         { key: 'float', value: 'float', text: 'Number' },
                         { key: 'string', value: 'string', text: 'String' },
@@ -18,7 +18,11 @@ class EmbeddedTable extends React.Component {
                           <Table.HeaderCell>Key</Table.HeaderCell>
                           <Table.HeaderCell>Value</Table.HeaderCell>
                           <Table.HeaderCell>Type</Table.HeaderCell>
-                          <Table.HeaderCell>Action</Table.HeaderCell>
+                          <Table.HeaderCell>
+                              <Header textAlign='center'>
+                                  <a><Icon name='add' link={true} onClick={this.props.addEmbeddedRow}/></a>
+                              </Header>
+                          </Table.HeaderCell>
                     </Table.Row>
               </Table.Header>
 
@@ -29,7 +33,7 @@ class EmbeddedTable extends React.Component {
                               return (<Table.Row key={index}>
                                   <Table.Cell>
                                       <Form.Field>
-                                      <input ref={input => {this[keyName] = input}} type="text" disabled={embeddedObject === '' ? '' : 'disabled'} placeholder="Key"/>
+                                      <input ref={input => {this[keyName] = input}} type="text" disabled={embeddedObject[index] === key ? 'disabled' : ''} placeholder="Key"/>
                                       </Form.Field>
                                   </Table.Cell>
                                   <Table.Cell>
@@ -41,8 +45,8 @@ class EmbeddedTable extends React.Component {
                                       </Form.Field>
                                   </Table.Cell>
                                   <Table.Cell>
-                                      <Header textAlign='center'><a><Icon name='add' link={true} onClick={this.props.addEmbeddedRow}/>
-                                      <Icon name='delete' data-index={index} link={true} onClick={(e) => this.props.deleteEmbeddedRow(e)}/></a>
+                                      <Header textAlign='center'>
+                                          <a><Icon name='delete' data-index={index} link={true} onClick={(e) => this.props.deleteEmbeddedRow(e)}/></a>
                                       </Header>
                                   </Table.Cell>
                               </Table.Row>)
