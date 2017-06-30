@@ -1,8 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Grid, Form, Select, Divider, Button, Icon } from 'semantic-ui-react';
 import EmbeddedTable from './EmbeddedTable';
 import EditFile from './EditFile';
-import PropTypes from 'prop-types';
 
 
 class File extends React.Component {
@@ -14,8 +14,8 @@ class File extends React.Component {
         this.handleObjectChange = this.handleObjectChange.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
         this.state = {
-            object : {},
-            options : [{key:'null', value:'null',text:''}]
+            object: {},
+            options: [{key: 'null', value: 'null',text: ''}]
         }
     }
 
@@ -27,7 +27,7 @@ class File extends React.Component {
             // Remplir component state avec les valeurs fichiers et liste dropdown
             const objectName = this.props.match.params.idFile;
             const object = JSON.parse(localStorage.getItem(`file-${objectName}`));
-            for (var obj in object) {
+            for (var obj of Object.keys(object)) {
                 const option = {key:obj, value:obj,text:obj}
                 this.state.options.push(option)
             }
@@ -43,27 +43,28 @@ class File extends React.Component {
         this.inObject = []; // Argument à passer pour dessiner les objets embarqués
         if(value !== 'null') { // cas d'une séléction vide
             // Les trois valeur à ajouter dans les champs du formulaire
-            const key = this.selectedObject = value;
+            const key = value;
+            this.selectedObject = value;
             const val = this.state.object[value];
             const type = typeof(val);
             this.key.value = key;
             if(type === 'object') { // Choix d'un type Object
                 this.displayTable = true;
-                for (var obj in val) {
+                for (var obj of Object.keys(val)) {
                     this.inObject.push(obj);
                 }
             } else if(type === 'boolean'){ // Choix d'un type boolean
                 this.switchInput = true;
             }
         }
-        setTimeout(() => {// Vider ou remplir les champs après les Changements dans le dropdown des types
+        setTimeout(() => {// Vider ou non les champs après Changements des types
             if(this.value != null) {
                 if(this.switchInput) {
                     this.value.checked =  this.state.object[value]
                 }
                  this.value.value = this.state.object[value];
             }else {
-                const table = this.refs.embeddedTable;
+                const table = this.embeddedTable;
                 for (const [index,key] of this.inObject.entries()) {
                     table[`key${index}`].value = key;
                     table[`value${index}`].value = this.state.object[this.selectedObject][key];
@@ -128,7 +129,10 @@ class File extends React.Component {
         }
         this.setState({object});
         this.key.value = '';
-        type === 'bool' ? this.value.checked = false : this.value.value = '';
+        if(type === 'bool')
+            this.value.checked = false;
+        else
+            this.value.value = '';
     }
 
     // save object in local
@@ -147,7 +151,7 @@ class File extends React.Component {
     // Delete embedded row
     deleteEmbeddedRow(e) {
         const index = e.target.dataset.index;
-        const table = this.refs.embeddedTable;
+        const table = this.embeddedTable;
 
         if(this.inObject.length === 1){ // Si la ligne à supprimer est la dernières
             table[`key${index}`].value = '';
@@ -163,7 +167,7 @@ class File extends React.Component {
     addEmbeddedOject() {
         const object = {...this.state.object};
         const embeddedObject = {};
-        const table = this.refs.embeddedTable;
+        const table = this.embeddedTable;
         const objectKey = this.key.value;
         for (const index in this.inObject) {
             if(table[`key${index}`].value !== '' &&  table[`value${index}`] !== '') {
@@ -245,7 +249,7 @@ class File extends React.Component {
                       ];
         valInput = !this.switchInput ? <input type="text" placeholder="Value" ref={input => {this.value = input}} onChange={(e) => this.handleEdit(e)}/> : <input type="checkbox" ref={input => {this.value = input}} onChange={(e) => this.handleEdit(e)}/>;
         table = this.displayTable ? <EmbeddedTable
-                                        ref='embeddedTable'
+                                        ref={input => {this.embeddedTable = input}}
                                         inObject={this.inObject}
                                         addEmbeddedRow={this.addEmbeddedRow}
                                         deleteEmbeddedRow={this.deleteEmbeddedRow}
@@ -269,15 +273,18 @@ class File extends React.Component {
                         <Form>
                             <Form.Group widths='equal'>
                                 <Form.Field>
-                                    <label htmlFor="types">Types</label>
+                                    <label htmlFor="types">Types
+                                    </label>
                                     <Select name='type' placeholder='Select type' options={types} onChange={(e,{value}) => this.handleEdit(e,value)}/>
                                 </Form.Field>
                                 <Form.Field>
-                                    <label htmlFor="key">key</label>
+                                    <label htmlFor="key">key
+                                    </label>
                                     <input type="text" placeholder="Key" disabled={(this.path === 'edit' && this.selectedObject !== '') ? 'disabled' : ''} ref={input => {this.key = input}} onChange={(e) => this.handleEdit(e)}/>
                                 </Form.Field>
                                 {!this.displayTable ? <Form.Field>
-                                    <label htmlFor="value">Value</label>
+                                    <label htmlFor="value">Value
+                                    </label>
                                     {valInput}
                                 </Form.Field> : null}
                             </Form.Group>
@@ -292,7 +299,10 @@ class File extends React.Component {
 }
 
 File.contextTypes = {
-    router : PropTypes.object
+    router: PropTypes.object
+};
+File.propTypes = {
+    match: PropTypes.object.isRequired
 }
 
 export default File;
