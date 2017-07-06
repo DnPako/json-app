@@ -23,15 +23,16 @@ class File extends React.Component {
         this.deleted = false;
         this.path = this.props.match.url.split('/')[2]; // Edit or Add
         if(this.path === 'edit') {
+            const options = [...this.state.options];
             this.selectedObject = ''; // La valeur séléctionnée dans le dropdown de la modification
             // Remplir component state avec les valeurs fichiers et liste dropdown
             const objectName = this.props.match.params.idFile;
             const object = JSON.parse(localStorage.getItem(`file-${objectName}`));
             for (var obj of Object.keys(object)) {
                 const option = {key:obj, value:obj,text:obj}
-                this.state.options.push(option)
+                options.push(option)
             }
-            this.setState({object});
+            this.setState({object,options});
         }
     }
 
@@ -76,7 +77,7 @@ class File extends React.Component {
                 this.selectedObject = '';
             }
         }, 100)
-        this.forceUpdate();
+        this.setState(this.state);
     }
 
     // Changement dans le formulaire
@@ -92,6 +93,7 @@ class File extends React.Component {
             } else if (value === 'bool') {
                 this.switchInput = true;
             }
+            this.setState(this.state);
         }
         if(this.path === 'edit' && this.state.object[this.selectedObject] !== undefined) {// Update
             // Ajout direct des modifications à l'objet
@@ -101,7 +103,6 @@ class File extends React.Component {
                 this.setState({object});
             }
         }
-        this.forceUpdate();
     }
 
     // Add json object
@@ -145,7 +146,7 @@ class File extends React.Component {
     addEmbeddedRow() {
         const timestamp = Date.now();
         this.inObject.push(timestamp);
-        this.forceUpdate();
+        this.setState(this.state);
     }
 
     // Delete embedded row
@@ -160,7 +161,7 @@ class File extends React.Component {
         else { // Sinon on supprime la ligne
             this.inObject.splice(index,1);
         }
-        this.forceUpdate();
+        this.setState(this.state);
     }
 
     //Add json with embedded Object
@@ -194,7 +195,7 @@ class File extends React.Component {
     cancelEmbeddedObject(){
         this.displayTable = false;
         this.switchInput = false;
-        this.forceUpdate();
+        this.setState(this.state);
     }
 
     // Go home
@@ -273,18 +274,15 @@ class File extends React.Component {
                         <Form>
                             <Form.Group widths='equal'>
                                 <Form.Field>
-                                    <label htmlFor="types">Types
-                                    </label>
+                                    <label htmlFor="types">Types</label>
                                     <Select name='type' placeholder='Select type' options={types} onChange={(e,{value}) => this.handleEdit(e,value)}/>
                                 </Form.Field>
                                 <Form.Field>
-                                    <label htmlFor="key">key
-                                    </label>
+                                    <label htmlFor="key">key</label>
                                     <input type="text" placeholder="Key" disabled={(this.path === 'edit' && this.selectedObject !== '') ? 'disabled' : ''} ref={input => {this.key = input}} onChange={(e) => this.handleEdit(e)}/>
                                 </Form.Field>
                                 {!this.displayTable ? <Form.Field>
-                                    <label htmlFor="value">Value
-                                    </label>
+                                    <label htmlFor="value">Value</label>
                                     {valInput}
                                 </Form.Field> : null}
                             </Form.Group>
